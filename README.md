@@ -3,9 +3,10 @@
 **Prerequisites**
 - Make sure you have [Node.js](https://nodejs.org/) installed in your machine.
 - You can choose your preferred package manager from the following options:
-  - **npm**: The default package manager for Node.js.
-  - **yarn**: An alternative package manager that offers features like Plug'n'Play.
-  - **bun**: A modern JavaScript runtime and package manager.
+  - **npm**
+  - **yarn**
+  - **bun**
+  - **pnpm**
 
 **Setup Instructions**
 - Clone the dev branch of the repository.
