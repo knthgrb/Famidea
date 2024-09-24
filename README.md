@@ -1,7 +1,7 @@
 ## Getting Started
 
 **Prerequisites**
-- Make sure you have [Node.js](https://nodejs.org/) installed in you machine.
+- Make sure you have [Node.js](https://nodejs.org/) installed in your machine.
 - You can choose your preferred package manager from the following options:
   - **npm**: The default package manager for Node.js.
   - **yarn**: An alternative package manager that offers features like Plug'n'Play.
