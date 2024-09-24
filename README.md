@@ -30,11 +30,11 @@
   ```bash
   npm run dev
   # or
-  yarn dev
+  yarn run dev
   # or
-  pnpm dev
+  pnpm run dev
   # or
-  bun dev
+  bun run dev
   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser.
