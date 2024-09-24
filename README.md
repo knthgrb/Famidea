@@ -14,7 +14,7 @@
   ```
 - Navigate to the project directory.
   ```bash
-  cd famidea
+  cd Famidea
   ```
 - Install all dependencies.
   ```bash
