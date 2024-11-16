@@ -70,11 +70,17 @@ const NewMessageModal = ({
   );
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const supabase = createClient();
   const { user } = useUserStore();
 
-  const userRole = localStorage.getItem("userRole") || null;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const role = window.localStorage.getItem("userRole");
+      setUserRole(role);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchRecipients = async () => {
