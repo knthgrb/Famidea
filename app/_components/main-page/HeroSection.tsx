@@ -11,6 +11,8 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16 h-full">
           <div className="relative h-64 overflow-hidden rounded-lg sm:h-92 lg:order-last lg:h-full">
             <Image
+              height={100}
+              width={100}
               alt="Login Image"
               src="/images/login_image.png"
               className="absolute inset-0 h-full w-full object-cover"

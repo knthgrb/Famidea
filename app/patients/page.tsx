@@ -1,5 +1,5 @@
 import React from "react";
-import Patients from "./Patients";
+import Patients from "./_components/Patients";
 import { getSubscribedPatients } from "@/services/patients_service";
 import { createClient } from "@/utils/supabase/server";
 

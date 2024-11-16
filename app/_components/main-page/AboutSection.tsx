@@ -11,8 +11,10 @@ export default function AboutSection() {
         <div className="flex flex-col lg:flex-row gap-8 justify-between">
           <div className="flex flex-1 items-center justify-center">
             <Image
+              height={100}
+              width={100}
               alt="Birth center"
-              src="images/about.png"
+              src="/images/about.png"
               className="rounded-lg h-72 lg:h-96 object-scale-down w-full"
             />
           </div>
