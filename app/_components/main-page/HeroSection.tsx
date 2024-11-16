@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function HeroSection() {
@@ -9,8 +10,8 @@ export default function HeroSection() {
       <div className="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-20 ">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16 h-full">
           <div className="relative h-64 overflow-hidden rounded-lg sm:h-92 lg:order-last lg:h-full">
-            <img
-              alt=""
+            <Image
+              alt="Login Image"
               src="/images/login_image.png"
               className="absolute inset-0 h-full w-full object-cover"
             />

@@ -1,6 +1,6 @@
 "use client";
 import { formatScheduledDate } from "@/utils/formatScheduleDate";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -17,7 +17,7 @@ interface PatientClientProps {
   initialPatients: any;
 }
 export default function Patients({ initialPatients }: PatientClientProps) {
-  const [patients, setPatients] = useState(initialPatients);
+  const [patients, _] = useState(initialPatients);
 
   const router = useRouter();
 
@@ -27,7 +27,7 @@ export default function Patients({ initialPatients }: PatientClientProps) {
       <div>
         <h1 className="text-3xl text-gray-600 font-semibold">Patients</h1>
         <p className="text-gray-500 mt-1">
-          List of your patients who's subscription status is active.
+          List of your patients who&apos;s subscription status is active.
         </p>
       </div>
       <div className="flex-1 relative mt-6 border border-gray-300 rounded-lg overflow-scroll flex flex-col">

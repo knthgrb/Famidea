@@ -1,9 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { ConversationSummary } from "@/lib/types/chat";
 import { useUserStore } from "@/lib/store/user";
-import { on } from "events";
 import { getInitials } from "@/utils/getUserInitials";
 
 interface ConversationsListProps {
@@ -102,7 +100,7 @@ const ConversationsList = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [user]);
+  }, [user, supabase, conversations]);
 
   if (loading) {
     return (

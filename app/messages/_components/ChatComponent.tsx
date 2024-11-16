@@ -19,7 +19,6 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
@@ -66,7 +65,7 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [conversationId]);
+  }, [conversationId, fetchMessages]);
 
   useEffect(() => {
     // Subscribe to new messages
@@ -90,7 +89,7 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [conversationId]);
+  }, [conversationId, supabase]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

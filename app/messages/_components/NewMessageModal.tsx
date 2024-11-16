@@ -16,7 +16,6 @@ import { showToast } from "@/utils/toastUtils";
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -34,23 +33,6 @@ interface NewMessageModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreateConversation: (conversation: ConversationSummary) => void;
-}
-
-// Database types based on schema
-interface Patient {
-  id: string;
-  fullName: string;
-  address: string;
-  phoneNumber: string;
-  created_at: string;
-}
-
-interface BirthCenter {
-  id: string;
-  centerName: string;
-  address: string;
-  phoneNumber: string;
-  created_at: string;
 }
 
 interface Recipient {
@@ -136,7 +118,7 @@ const NewMessageModal = ({
     if (isOpen) {
       fetchRecipients();
     }
-  }, [isOpen]);
+  }, [isOpen, supabase, userRole]);
 
   const handleSend = async () => {
     if (!selectedRecipient || !message.trim() || !user) {

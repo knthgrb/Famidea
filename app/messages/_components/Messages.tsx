@@ -11,7 +11,7 @@ export default function Messages() {
   const [selectedConversation, setSelectedConversation] = useState<any | null>(
     null
   );
-  const [isMobileView, setIsMobileView] = useState<boolean>(true);
+  const [isMobileView, _] = useState<boolean>(true);
 
   const handleCreateConversation = (conversation: any) => {
     setSelectedConversation(conversation);

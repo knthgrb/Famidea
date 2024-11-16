@@ -26,7 +26,7 @@ export default function Dashboard() {
     };
 
     fetchUser();
-  }, []);
+  }, [supabase, router]);
 
   const handleLogout = async () => {
     const supabase = createClient();

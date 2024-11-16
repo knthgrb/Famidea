@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function AboutSection() {
@@ -9,7 +10,7 @@ export default function AboutSection() {
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8 justify-between">
           <div className="flex flex-1 items-center justify-center">
-            <img
+            <Image
               alt="Birth center"
               src="images/about.png"
               className="rounded-lg h-72 lg:h-96 object-scale-down w-full"

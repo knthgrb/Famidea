@@ -48,7 +48,7 @@ export default function CompleteProfile() {
       }
     };
     fetchUser();
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     console.log(role);

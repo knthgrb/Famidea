@@ -107,6 +107,7 @@ export default function Appointments({
       await updateCompletedAppointmentStatus(appointmentId);
       showToast("Appointment status updated successfully!", "success");
     } catch (error) {
+      console.log(error);
       showToast("Failed to update appointment status", "error");
     }
   };
@@ -116,6 +117,7 @@ export default function Appointments({
       await deleteAppointmentRecord(appointmentId);
       showToast("Appointment record deleted.", "success");
     } catch (error) {
+      console.log(error);
       showToast("Failed to delete appointment record", "error");
     }
   };
