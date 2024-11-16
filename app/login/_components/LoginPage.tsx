@@ -102,7 +102,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
+  }, [supabase, router]);
 
   // Login handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -115,7 +115,6 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      await fetchUser();
     } catch (error) {
       showToast((error as Error).message, "error");
     } finally {
