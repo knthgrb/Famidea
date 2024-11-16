@@ -4,9 +4,8 @@ import { createClient } from "@/utils/supabase/server";
 import { Appointment } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 
-const supabase = createClient();
-
 export async function getAppointments() {
+  const supabase = createClient();
   const statuses = ["scheduled", "completed"];
 
   try {
@@ -40,6 +39,7 @@ export async function getAppointments() {
 }
 
 export async function createAppointment(appointment: Appointment) {
+  const supabase = createClient();
   try {
     const { error } = await supabase.from("appointments").insert(appointment);
 
@@ -53,6 +53,7 @@ export async function createAppointment(appointment: Appointment) {
 }
 
 export async function updateCompletedAppointmentStatus(appointmentId: string) {
+  const supabase = createClient();
   try {
     const { error } = await supabase
       .from("appointments")
@@ -69,6 +70,7 @@ export async function updateCompletedAppointmentStatus(appointmentId: string) {
 }
 
 export async function deleteAppointmentRecord(appointmentId: string) {
+  const supabase = createClient();
   try {
     const { error } = await supabase
       .from("appointments")
@@ -88,6 +90,7 @@ export async function getAppointmentsOfAPatient(
   patientId: string,
   birthCenterId: string
 ) {
+  const supabase = createClient();
   try {
     const { data } = await supabase
       .from("appointments")

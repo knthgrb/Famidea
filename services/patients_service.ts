@@ -2,11 +2,11 @@
 import { SubscribedPatient } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
-const supabase = createClient();
-
 export const getPatientDetails = async (
   patientId: string
 ): Promise<any | null> => {
+  const supabase = createClient();
+
   try {
     const { data } = await supabase
       .from("patients")
@@ -20,6 +20,8 @@ export const getPatientDetails = async (
 };
 
 export const getSubscribedPatients = async (birthCenterId: string) => {
+  const supabase = createClient();
+
   try {
     const { data } = await supabase
       .from("subscribed_patients")

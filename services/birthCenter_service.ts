@@ -4,9 +4,9 @@ import { createClient } from "@/utils/supabase/server";
 import { DatabaseServiceData, ServiceData } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 
-const supabase = createClient();
-
 export async function fetchServices() {
+  const supabase = createClient();
+
   try {
     const { data: user, error: userError } = await supabase.auth.getUser();
 
@@ -44,6 +44,8 @@ export async function fetchServices() {
 }
 
 export async function saveService(serviceData: ServiceData) {
+  const supabase = createClient();
+
   try {
     const { data: user, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
@@ -78,6 +80,8 @@ export async function saveService(serviceData: ServiceData) {
 }
 
 export async function editService(id: number, serviceData: ServiceData) {
+  const supabase = createClient();
+
   try {
     const { data: user, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
@@ -114,6 +118,8 @@ export async function editService(id: number, serviceData: ServiceData) {
 }
 
 export async function deleteService(id: number) {
+  const supabase = createClient();
+
   try {
     const { data: user, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
