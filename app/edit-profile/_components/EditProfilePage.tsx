@@ -28,9 +28,9 @@ export default function EditProfilePage() {
     province: user?.address?.split(",")[2].trim(),
     zipcode: user?.address?.split(",")[3].trim(),
     country: "Philippines",
-    phoneNumber: user.phoneNumber,
-    birthDate: user.birthDate,
-    gender: user.gender,
+    phoneNumber: user?.phoneNumber,
+    birthDate: user?.birthDate,
+    gender: user?.gender,
   });
 
   const name = userRole === "birth_center" ? user?.centerName : user?.fullName;
