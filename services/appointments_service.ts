@@ -4,10 +4,10 @@ import { createClient } from "@/utils/supabase/server";
 import { Appointment } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 
-export async function getAppointments() {
+export async function getAppointments(birthCenterId: string) {
   const supabase = createClient();
-  const statuses = ["scheduled", "completed"];
-
+  const statuses = ["scheduled", "completed", "canceled"];
+  console.log("birthCenterId", birthCenterId);
   try {
     const results = await Promise.all(
       statuses.map((status) =>
@@ -22,18 +22,24 @@ export async function getAppointments() {
             birth_center_services(serviceName)
           `
           )
+          .eq("birthCenterId", birthCenterId)
           .eq("status", status)
       )
     );
 
-    const appointments: { scheduled: Appointment[]; completed: Appointment[] } =
-      {
-        scheduled: results[0].data?.map(formatAppointment) || [],
-        completed: results[1].data?.map(formatAppointment) || [],
-      };
+    const appointments: {
+      scheduled: Appointment[];
+      completed: Appointment[];
+      canceled: Appointment[];
+    } = {
+      scheduled: results[0].data?.map(formatAppointment) || [],
+      completed: results[1].data?.map(formatAppointment) || [],
+      canceled: results[2].data?.map(formatAppointment) || [],
+    };
 
     return appointments;
   } catch (error) {
+    console.log("Error fetching appointments:", error);
     throw new Error("Failed to fetch appointments");
   }
 }

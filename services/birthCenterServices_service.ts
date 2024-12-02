@@ -141,3 +141,20 @@ export async function deleteService(id: number) {
     );
   }
 }
+
+// * get nearby birth centers. max distance 30 km
+export async function getNearbyBirthCenters(user: any, maxDistance = 50) {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase.rpc("get_near_birth_centers", {
+      user_lat: user?.latitude,
+      user_long: user?.longitude,
+      max_distance: maxDistance,
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch near birth centers:", error);
+    throw new Error("Failed to fetch birth centers.");
+  }
+}

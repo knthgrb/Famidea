@@ -5,11 +5,7 @@ import Header from "../_components/Header";
 import { useUserStore } from "@/lib/store/user";
 import { PatientSidebar } from "../_components/patient/PatientSidebar";
 
-export default function MessagesLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function layout({ children }: { children: React.ReactNode }) {
   const { userRole } = useUserStore();
   return (
     <SidebarProvider>

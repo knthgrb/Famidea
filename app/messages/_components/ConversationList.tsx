@@ -14,7 +14,6 @@ const ConversationsList = ({
   onSelectConversation,
 }: ConversationsListProps) => {
   const [conversations, setConversations] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const supabase = createClient();
   const { user } = useUserStore();
 
@@ -39,7 +38,6 @@ const ConversationsList = ({
         return;
       }
 
-      // Transform the data and deduplicate conversations
       const conversationMap = new Map();
 
       conversationsData.forEach((conv) => {
@@ -52,8 +50,6 @@ const ConversationsList = ({
             ? conv.patients?.fullName
             : conv.birth_centers?.centerName;
 
-        // Only add this conversation if we haven't seen this user yet
-        // or if this conversation is more recent than the one we have
         if (
           !conversationMap.has(otherUserId) ||
           new Date(conv.last_message_at) >
@@ -66,7 +62,6 @@ const ConversationsList = ({
         }
       });
 
-      // Convert map back to array and sort by last message date
       const deduplicatedConversations = Array.from(
         conversationMap.values()
       ).sort(
@@ -76,12 +71,20 @@ const ConversationsList = ({
       );
 
       setConversations(deduplicatedConversations);
-      setLoading(false);
+
+      // If a selectedId is provided, automatically select that conversation
+      if (selectedId) {
+        const selectedConversation = deduplicatedConversations.find(
+          (conv) => conv.conversation_id === selectedId
+        );
+        if (selectedConversation) {
+          onSelectConversation(selectedConversation);
+        }
+      }
     };
 
     fetchConversations();
-    console.log("conversations", conversations);
-    // Set up real-time subscription
+
     const subscription = supabase
       .channel("conversation_updates")
       .on(
@@ -100,13 +103,7 @@ const ConversationsList = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [user, supabase, conversations]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-4">Loading...</div>
-    );
-  }
+  }, [user, supabase, selectedId]);
 
   return (
     <>

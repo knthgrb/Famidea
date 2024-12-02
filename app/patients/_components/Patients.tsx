@@ -30,7 +30,7 @@ export default function Patients({ initialPatients }: PatientClientProps) {
           List of your patients who&apos;s subscription status is active.
         </p>
       </div>
-      <div className="flex-1 relative mt-6 border border-gray-300 rounded-lg overflow-scroll flex flex-col">
+      <div className="flex-1 relative mt-6 border border-gray-300 rounded-lg overflow-auto flex flex-col">
         <div className="absolute inset-0 overflow-auto">
           <table className="min-w-full divide-y divide-gray-200 bg-white text-md">
             <thead className="sticky top-0 z-10 bg-white shadow-sm text-center w-full font-semibold text-gray-600">

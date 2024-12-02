@@ -33,6 +33,7 @@ import {
 import { formatScheduledDate } from "@/utils/formatScheduleDate";
 import CreateAppointmentForm from "./CreateAppointmentForm";
 import { LuPlus } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 interface AppointmentsClientProps {
   initialAppointments: Record<string, Appointment[]>;
@@ -46,6 +47,8 @@ export default function Appointments({
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredAppointments, setFilteredAppointments] =
     useState(initialAppointments);
+
+  const router = useRouter();
 
   // Function to sort appointments by scheduled date
   const sortAppointments = (appointmentList: Appointment[]) => {
@@ -62,6 +65,12 @@ export default function Appointments({
       }
 
       if (a.status === "completed" && b.status === "completed") {
+        if (dateA < now && dateB >= now) return -1;
+        if (dateB < now && dateA >= now) return 1;
+        return dateA.getTime() - dateB.getTime();
+      }
+
+      if (a.status === "canceled" && b.status === "canceled") {
         if (dateA < now && dateB >= now) return -1;
         if (dateB < now && dateA >= now) return 1;
         return dateA.getTime() - dateB.getTime();
@@ -84,6 +93,9 @@ export default function Appointments({
       completed: appointments.completed.filter((appointment) =>
         appointment.patientName?.toLowerCase().includes(searchTermLower)
       ),
+      canceled: appointments.canceled.filter((appointment) =>
+        appointment.patientName?.toLowerCase().includes(searchTermLower)
+      ),
     };
   };
 
@@ -91,6 +103,7 @@ export default function Appointments({
     const sortedAppointments = {
       scheduled: sortAppointments(initialAppointments.scheduled),
       completed: sortAppointments(initialAppointments.completed),
+      canceled: sortAppointments(initialAppointments.canceled),
     };
     setAppointments(sortedAppointments);
     setFilteredAppointments(sortedAppointments);
@@ -107,7 +120,6 @@ export default function Appointments({
       await updateCompletedAppointmentStatus(appointmentId);
       showToast("Appointment status updated successfully!", "success");
     } catch (error) {
-      console.log(error);
       showToast("Failed to update appointment status", "error");
     }
   };
@@ -117,7 +129,6 @@ export default function Appointments({
       await deleteAppointmentRecord(appointmentId);
       showToast("Appointment record deleted.", "success");
     } catch (error) {
-      console.log(error);
       showToast("Failed to delete appointment record", "error");
     }
   };
@@ -173,7 +184,7 @@ export default function Appointments({
                           <button
                             className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm"
                             onClick={() =>
-                              console.log("View Appointment", appointment.id)
+                              router.push(`/appointments/${appointment.id}`)
                             }
                           >
                             <MdOutlineRemoveRedEye
@@ -191,6 +202,34 @@ export default function Appointments({
                             <TbCheck size={20} className="text-green-500" />
                             Mark as Completed
                           </button>
+                          <AlertDialog>
+                            <AlertDialogTrigger className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm">
+                              <AiOutlineDelete size={20} color="red" /> Delete
+                              Record
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Delete Record?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the record.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600 text-white hover:bg-red-600/75"
+                                  onClick={() =>
+                                    handleDeleteRecord(appointment.id)
+                                  }
+                                >
+                                  Confirm
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </>
                       )}
                       {appointment.status === "completed" && (
@@ -198,14 +237,58 @@ export default function Appointments({
                           <button
                             className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm"
                             onClick={() =>
-                              console.log("View Appointment", appointment.id)
+                              router.push(`/appointments/${appointment.id}`)
                             }
                           >
                             <MdOutlineRemoveRedEye
                               size={20}
                               className="text-blue-500"
                             />
-                            View
+                            View Details
+                          </button>
+                          <AlertDialog>
+                            <AlertDialogTrigger className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm">
+                              <AiOutlineDelete size={20} color="red" /> Delete
+                              Record
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Delete Record?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the record.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600 text-white hover:bg-red-600/75"
+                                  onClick={() =>
+                                    handleDeleteRecord(appointment.id)
+                                  }
+                                >
+                                  Confirm
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      )}
+                      {appointment.status === "canceled" && (
+                        <>
+                          <button
+                            className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm"
+                            onClick={() =>
+                              router.push(`/appointments/${appointment.id}`)
+                            }
+                          >
+                            <MdOutlineRemoveRedEye
+                              size={20}
+                              className="text-blue-500"
+                            />
+                            View Details
                           </button>
                           <AlertDialog>
                             <AlertDialogTrigger className="flex items-center gap-2 w-full text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-sm">
@@ -276,6 +359,7 @@ export default function Appointments({
               <TabsList>
                 <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
                 <TabsTrigger value="completed">Completed</TabsTrigger>
+                <TabsTrigger value="canceled">Canceled</TabsTrigger>
               </TabsList>
               <div className="relative w-auto">
                 <input
@@ -332,6 +416,29 @@ export default function Appointments({
                   </tr>
                 </thead>
                 {renderTableContent(filteredAppointments.completed)}
+              </table>
+            </div>
+          </TabsContent>
+          <TabsContent value="canceled" className="flex-1 relative">
+            <div className="absolute inset-0 overflow-auto">
+              <table className="min-w-full divide-y divide-gray-200 bg-white text-md">
+                <thead className="sticky top-0 bg-white shadow-sm z-10">
+                  <tr>
+                    <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-600 w-[25%]">
+                      Patient
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-600 w-[25%]">
+                      Service
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-600 w-[25%]">
+                      Schedule
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-600 w-[25%]">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                {renderTableContent(filteredAppointments.canceled)}
               </table>
             </div>
           </TabsContent>

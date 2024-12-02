@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { formatScheduledDate } from "@/utils/formatScheduleDate";
+import { calculateAge } from "@/utils/calculateAge";
 
 export default function PatientPage({ id }: { id: string }) {
   const supabase = createClient();
@@ -29,7 +30,6 @@ export default function PatientPage({ id }: { id: string }) {
         .order("scheduledAt", { ascending: false });
       return data;
     } catch (error) {
-      console.log(error);
       throw new Error("Failed to fetch appointments");
     }
   };
@@ -43,7 +43,6 @@ export default function PatientPage({ id }: { id: string }) {
       }
       return data;
     } catch (error) {
-      console.log(error);
       throw new Error("Failed to fetch patient details");
     }
   };
@@ -62,12 +61,6 @@ export default function PatientPage({ id }: { id: string }) {
     };
     getPatientDetails();
   }, [id]);
-
-  useEffect(() => {
-    if (patientInfo) {
-      console.log(patientInfo);
-    }
-  }, [patientInfo]);
 
   const getInitials = (name: string | null) => {
     if (!name) return "";
@@ -112,7 +105,9 @@ export default function PatientPage({ id }: { id: string }) {
           <p className="text-gray-600 font-semibold text-lg">Gender</p>
           <p className="text-gray-600 capitalize">{patientInfo?.gender}</p>
           <p className="text-gray-600 font-semibold text-lg mt-8">Age</p>
-          <p className="text-gray-600">{patientInfo?.age}</p>
+          <p className="text-gray-600">
+            {calculateAge(patientInfo?.birthDate)}
+          </p>
           <p className="text-gray-600 font-semibold text-lg mt-8">Birth Date</p>
           <p className="text-gray-600">{patientInfo?.birthDate}</p>
           <p className="text-gray-600 font-semibold text-lg mt-8">Address</p>

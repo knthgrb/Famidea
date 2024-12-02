@@ -69,7 +69,7 @@ export async function login(formData: FormData) {
   if (userData?.role === "birth_center") {
     redirect("/dashboard-birth-center");
   } else if (userData?.role === "patient") {
-    redirect("/dashboard-patient");
+    redirect("/for-you");
   }
 
   revalidatePath("/login", "layout");

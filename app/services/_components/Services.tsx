@@ -9,7 +9,7 @@ import {
   editService,
   saveService,
   deleteService,
-} from "@/services/birthCenter_service";
+} from "@/services/birthCenterServices_service";
 import { LuTrash, LuPenLine, LuPlus } from "react-icons/lu";
 import { convertDurationToWords } from "@/utils/convertDurationToWords";
 import { v4 as uuidv4 } from "uuid";

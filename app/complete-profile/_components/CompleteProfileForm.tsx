@@ -50,10 +50,6 @@ export default function CompleteProfile() {
     fetchUser();
   }, [supabase]);
 
-  useEffect(() => {
-    console.log(role);
-  }, [role]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -80,6 +76,7 @@ export default function CompleteProfile() {
       role === "patient" &&
       (!brgy ||
         !municipality ||
+        !zipcode ||
         !province ||
         !phoneNumber ||
         !age ||
@@ -98,7 +95,7 @@ export default function CompleteProfile() {
       return;
     }
 
-    const complete_address = `${brgy}, ${municipality}, ${province}, ${formData.zipcode}, ${formData.country}`;
+    const complete_address = `${brgy}, ${municipality}, ${province}, ${zipcode}, ${formData.country}`;
 
     try {
       const response = await fetch(
@@ -140,7 +137,7 @@ export default function CompleteProfile() {
           if (error)
             throw new Error(`Error updating profile: ${error.message}`);
 
-          router.push("/dashboard-patient");
+          router.push("/for-you");
         } else if (role === "birth_center") {
           const { error } = await supabase
             .from("birth_centers")

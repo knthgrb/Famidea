@@ -28,7 +28,7 @@ export interface Appointment {
   serviceId?: number;
   serviceName?: string;
   scheduledAt: Date;
-  status: "scheduled" | "completed";
+  status: "scheduled" | "completed" | "canceled";
 }
 
 export interface Patient {

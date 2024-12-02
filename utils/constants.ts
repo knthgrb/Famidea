@@ -1,4 +1,7 @@
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { LuUsers2 } from "react-icons/lu";
+import { RiQrScan2Line } from "react-icons/ri";
+import { VscFeedback } from "react-icons/vsc";
 import {
   LuCalendarClock,
   LuCalendarCheck2,
@@ -24,7 +27,7 @@ export const birthCenterSidebarItems = [
   {
     title: "Patients",
     url: "/patients",
-    icon: Calendar,
+    icon: LuUsers2,
   },
   {
     title: "Services",
@@ -33,8 +36,30 @@ export const birthCenterSidebarItems = [
   },
   {
     title: "QR Code",
-    url: "/scan",
-    icon: Search,
+    url: "/scan-qr-code",
+    icon: RiQrScan2Line,
+  },
+  {
+    title: "Feedbacks",
+    url: "/feedbacks",
+    icon: VscFeedback,
+  },
+];
+export const patientSidebartItems = [
+  {
+    title: "For you",
+    url: "/for-you",
+    icon: Home,
+  },
+  {
+    title: "Messages",
+    url: "/messages",
+    icon: Inbox,
+  },
+  {
+    title: "Appointments",
+    url: "/appointments",
+    icon: Calendar,
   },
 ];
 

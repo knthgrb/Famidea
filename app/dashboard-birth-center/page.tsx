@@ -1,5 +1,5 @@
 import { getAppointments } from "@/services/appointments_service";
-import { fetchServices } from "@/services/birthCenter_service";
+import { fetchServices } from "@/services/birthCenterServices_service";
 import DashboardComponent from "./_components/Dashboard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -13,13 +13,12 @@ export default async function DashboardPage() {
   // If no session or error, redirect to login
   if (!userData || userError) {
     redirect("/login");
-    return;
   }
 
   const birthCenterId = userData.user.id;
 
   const [appointments, services, subscribedPatients] = await Promise.all([
-    getAppointments(),
+    getAppointments(birthCenterId),
     fetchServices(),
     getSubscribedPatients(birthCenterId),
   ]);

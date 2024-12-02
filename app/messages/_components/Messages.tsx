@@ -12,14 +12,26 @@ export default function Messages() {
     null
   );
   const [isMobileView, _] = useState<boolean>(true);
+  const [conversations, setConversations] = useState<any[]>([]);
 
   const handleCreateConversation = (conversation: any) => {
     setSelectedConversation(conversation);
+    setConversations((prev) => [conversation, ...prev]);
     setIsModalOpen(false);
   };
 
   const handleBackToList = () => {
     setSelectedConversation(null);
+  };
+
+  const handleUpdateConversation = (updatedConversation: any) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.conversation_id === updatedConversation.conversation_id
+          ? updatedConversation
+          : conv
+      )
+    );
   };
 
   return (
@@ -58,8 +70,12 @@ export default function Messages() {
           <>
             <Chat
               conversationId={selectedConversation.conversation_id}
-              otherUser={selectedConversation.other_user}
+              otherUser={{
+                id: selectedConversation.other_user.id,
+                fullName: selectedConversation.other_user.fullName,
+              }}
               handleBackToList={handleBackToList}
+              updateConversation={handleUpdateConversation}
             />
           </>
         ) : (

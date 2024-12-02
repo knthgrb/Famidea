@@ -1,7 +1,7 @@
 import React from "react";
-import PatientPage from "./_components/PatientPage";
+import BirthCenterPage from "../_components/BirthCenterPage";
 
 export default function page({ params }: { params: { id: string } }) {
   const { id } = params;
-  return <PatientPage id={id} />;
+  return <BirthCenterPage id={id} />;
 }

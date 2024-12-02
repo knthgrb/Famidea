@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/command";
 import { useUserStore } from "@/lib/store/user";
 import { getSubscribedPatients } from "@/services/patients_service";
-import { fetchServices } from "@/services/birthCenter_service";
+import { fetchServices } from "@/services/birthCenterServices_service";
 import { ServiceData, SubscribedPatient } from "@/lib/types";
 
 interface CreateAppointmentFormProps {

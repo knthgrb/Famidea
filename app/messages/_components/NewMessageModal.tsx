@@ -70,17 +70,9 @@ const NewMessageModal = ({
   );
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
 
   const supabase = createClient();
-  const { user } = useUserStore();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const role = window.localStorage.getItem("userRole");
-      setUserRole(role);
-    }
-  }, []);
+  const { user, userRole } = useUserStore();
 
   useEffect(() => {
     const fetchRecipients = async () => {
@@ -124,7 +116,7 @@ const NewMessageModal = ({
     if (isOpen) {
       fetchRecipients();
     }
-  }, [isOpen, supabase, userRole]);
+  }, [isOpen, supabase]);
 
   const handleSend = async () => {
     if (!selectedRecipient || !message.trim() || !user) {
@@ -133,40 +125,63 @@ const NewMessageModal = ({
     }
 
     try {
-      // First create the conversation
-      const conversationData: Partial<Conversation> = {
-        birthcenter_id:
-          userRole === "birth_center" ? user.id : selectedRecipient.id,
-        patient_id: userRole === "patient" ? user.id : selectedRecipient.id,
-      };
-
-      const { data: conversation, error: conversationError } = await supabase
+      // First check if a conversation already exists
+      const { data: existingConversation } = await supabase
         .from("conversations")
-        .insert(conversationData)
-        .select()
+        .select("*")
+        .or(
+          `and(birthcenter_id.eq.${
+            userRole === "birth_center" ? user.id : selectedRecipient.id
+          },patient_id.eq.${
+            userRole === "patient" ? user.id : selectedRecipient.id
+          })`
+        )
         .single();
 
-      if (conversationError) {
-        showToast(conversationError.message, "error");
-        return;
+      let conversation;
+
+      if (existingConversation) {
+        // Use existing conversation
+        conversation = existingConversation;
+      } else {
+        // Create new conversation if none exists
+        const conversationData: Partial<Conversation> = {
+          birthcenter_id:
+            userRole === "birth_center" ? user.id : selectedRecipient.id,
+          patient_id: userRole === "patient" ? user.id : selectedRecipient.id,
+        };
+
+        const { data: newConversation, error: conversationError } =
+          await supabase
+            .from("conversations")
+            .insert(conversationData)
+            .select()
+            .single();
+
+        if (conversationError) {
+          showToast(conversationError.message, "error");
+          return;
+        }
+
+        conversation = newConversation;
+
+        // Create conversation participants only for new conversations
+        const participantsData = [
+          { conversation_id: conversation.id, user_id: user.id },
+          { conversation_id: conversation.id, user_id: selectedRecipient.id },
+        ];
+
+        const { error: participantsError } = await supabase
+          .from("conversation_participants")
+          .insert(participantsData);
+
+        if (participantsError) {
+          showToast(participantsError.message, "error");
+          return;
+        }
       }
 
-      // Then create the conversation participant records
-      const participantsData = [
-        { conversation_id: conversation.id, user_id: user.id },
-        { conversation_id: conversation.id, user_id: selectedRecipient.id },
-      ];
-
-      const { error: participantsError } = await supabase
-        .from("conversation_participants")
-        .insert(participantsData);
-
-      if (participantsError) {
-        showToast(participantsError.message, "error");
-        return;
-      }
-
-      // Then create the message
+      // Create the message
       const { error: messageError } = await supabase.from("messages").insert({
         conversation_id: conversation.id,
         sender_id: user.id,
@@ -180,9 +195,12 @@ const NewMessageModal = ({
         return;
       }
 
-      // Create conversation summary for the UI
+      // Create conversation summary object regardless of whether it's new or existing
       const conversationSummary: ConversationSummary = {
-        ...conversation,
+        id: conversation.id,
+        birthcenter_id: conversation.birthcenter_id,
+        patient_id: conversation.patient_id,
+        created_at: conversation.created_at,
         other_user: {
           id: selectedRecipient.id,
           displayName: selectedRecipient.displayName,
@@ -231,8 +249,8 @@ const NewMessageModal = ({
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
+              <PopoverContent className="w-[--trigger-width] p-0" align="start">
+                <Command className="w-full">
                   <CommandInput placeholder="Search recipients..." />
                   <CommandList>
                     <CommandEmpty>No recipient found.</CommandEmpty>

@@ -13,9 +13,15 @@ interface ChatProps {
     fullName: string;
   };
   handleBackToList: () => void;
+  updateConversation: (updatedConversation: any) => void;
 }
 
-const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
+const Chat = ({
+  conversationId,
+  otherUser,
+  handleBackToList,
+  updateConversation,
+}: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -27,15 +33,15 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        block: "end",
-        behavior: "smooth",
-      });
+      messagesEndRef.current.scrollIntoView();
     }
   };
 
   const fetchMessages = async () => {
     if (!conversationId) return;
+
+    setLoading(true); // Set loading when fetching new conversation
+    setMessages([]); // Clear existing messages
 
     const { data, error } = await supabase
       .from("messages")
@@ -60,36 +66,46 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
         .eq("is_read", false);
     }
 
-    setTimeout(scrollToBottom, 100);
+    // Use setTimeout to ensure DOM is updated before scrolling
+    setTimeout(scrollToBottom, 0);
   };
 
   useEffect(() => {
     fetchMessages();
-  }, [conversationId, fetchMessages]);
 
-  useEffect(() => {
-    // Subscribe to new messages
-    const subscription = supabase
+    // Subscribe to ALL changes in the messages table for this conversation
+    const channel = supabase
       .channel(`messages:${conversationId}`)
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*", // Listen to all events (INSERT, UPDATE, DELETE)
           schema: "public",
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages((current) => [...current, payload.new as Message]);
-          scrollToBottom();
+          if (payload.eventType === "INSERT") {
+            // Check if message already exists to prevent duplicates
+            setMessages((current) => {
+              const messageExists = current.some(
+                (msg) => msg.id === payload.new.id
+              );
+              if (messageExists) {
+                return current;
+              }
+              return [...current, payload.new as Message];
+            });
+            setTimeout(scrollToBottom, 0);
+          }
         }
       )
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      channel.unsubscribe();
     };
-  }, [conversationId, supabase]);
+  }, [conversationId]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,22 +117,58 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
       receiver_id: otherUser.id,
       message: newMessage.trim(),
       is_read: false,
+      created_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from("messages").insert(message);
+    // Generate a unique temporary ID for optimistic update
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage = {
+      ...message,
+      id: tempId,
+    };
 
-    if (error) {
+    // Optimistically add message to UI
+    setMessages((current) => [...current, optimisticMessage]);
+    setNewMessage("");
+
+    try {
+      const { error, data } = await supabase
+        .from("messages")
+        .insert(message)
+        .select();
+
+      if (!error) {
+        // Update conversation summary
+        updateConversation({
+          conversation_id: conversationId,
+          latestMessage: message,
+          timestamp: new Date().toISOString(),
+          other_user: otherUser,
+        });
+      }
+
+      if (error) throw error;
+
+      // Update the optimistic message with the real one
+      if (data && data[0]) {
+        setMessages((current) =>
+          current.map((m) => (m.id === tempId ? data[0] : m))
+        );
+      }
+    } catch (error) {
       console.error("Error sending message:", error);
-      return;
+      // Remove optimistic message on error
+      setMessages((current) => current.filter((m) => m.id !== tempId));
     }
 
-    setNewMessage("");
-    fetchMessages();
+    scrollToBottom();
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-4">Loading...</div>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center justify-center p-4">Loading...</div>
+      </div>
     );
   }
 
@@ -139,7 +191,7 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 pb-0"
       >
-        <div className="flex flex-col min-h-full justify-end">
+        <div className="flex flex-col min-h-full justify-end mr-4">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -156,7 +208,12 @@ const Chat = ({ conversationId, otherUser, handleBackToList }: ChatProps) => {
               >
                 <p>{message.message}</p>
                 <span className="text-xs opacity-75">
-                  {new Date(message.created_at).toLocaleTimeString()}
+                  {new Date(message.created_at).toLocaleString("en-PH", {
+                    timeZone: "Asia/Manila",
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
                 </span>
               </div>
             </div>

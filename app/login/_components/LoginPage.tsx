@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setUser } = useUserStore();
+  const { setUser, setUserRole } = useUserStore();
 
   const supabase = createClient();
   const router = useRouter();
@@ -54,10 +54,9 @@ export default function LoginPage() {
           .eq("id", authData.user.id)
           .single();
 
-        if (patientDetails) setUser(patientDetails);
-
-        if (typeof window !== "undefined" && window.localStorage) {
-          localStorage.setItem("userRole", "patient");
+        if (patientDetails) {
+          setUser(patientDetails);
+          setUserRole(userData.role);
         }
       }
 
@@ -69,10 +68,9 @@ export default function LoginPage() {
           .eq("id", authData.user.id)
           .single();
 
-        if (birthCenterDetails) setUser(birthCenterDetails);
-
-        if (typeof window !== "undefined" && window.localStorage) {
-          localStorage.setItem("userRole", "birth_center");
+        if (birthCenterDetails) {
+          setUser(birthCenterDetails);
+          setUserRole(userData.role);
         }
       }
 
@@ -80,7 +78,7 @@ export default function LoginPage() {
       if (userData) {
         switch (userData.role) {
           case "patient":
-            router.push("/dashboard-patient");
+            router.push("/for-you");
             break;
           case "birth_center":
             router.push("/dashboard-birth-center");
@@ -115,6 +113,7 @@ export default function LoginPage() {
 
     try {
       await login(formData);
+      await fetchUser();
     } catch (error) {
       showToast((error as Error).message, "error");
     } finally {
