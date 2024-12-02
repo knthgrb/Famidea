@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   applicationName: "Famidea",
   title: "Famidea",
-  description: "This is Famidea",
+  description: "Famidea bridges the gap between patients and birth centers.",
   // themeColor: "#000000",
   appleWebApp: {
     capable: true,
