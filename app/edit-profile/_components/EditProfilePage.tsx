@@ -206,9 +206,9 @@ export default function EditProfilePage() {
           htmlFor="avatarUpload"
           className="flex items-center justify-center bg-customAccentColor text-white rounded-full w-28 h-28 text-lg font-bold cursor-pointer relative"
         >
-          {user.avatarUrl ? (
+          {user?.avatarUrl ? (
             <Image
-              src={user.avatarUrl}
+              src={user?.avatarUrl}
               width={100}
               height={100}
               alt="Avatar"
