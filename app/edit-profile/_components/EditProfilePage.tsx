@@ -4,7 +4,7 @@ import { getInitials } from "@/utils/getUserInitials";
 import { createClient } from "@/utils/supabase/client";
 import { showToast } from "@/utils/toastUtils";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,13 +16,17 @@ export default function EditProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   const [formData, setFormData] = useState({
     fullName: userRole === "patient" ? user?.fullName : "",
     centerName: userRole === "birth_center" ? user?.centerName : "",
-    brgy: user.address.split(",")[0].trim(),
-    municipality: user.address.split(",")[1].trim(),
-    province: user.address.split(",")[2].trim(),
-    zipcode: user.address.split(",")[3].trim(),
+    brgy: user?.address?.split(",")[0].trim(),
+    municipality: user?.address?.split(",")[1].trim(),
+    province: user?.address?.split(",")[2].trim(),
+    zipcode: user?.address?.split(",")[3].trim(),
     country: "Philippines",
     phoneNumber: user.phoneNumber,
     birthDate: user.birthDate,
